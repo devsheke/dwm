@@ -43,3 +43,7 @@ uninstall:
 		${DESTDIR}${MANPREFIX}/man1/dwm.1
 
 .PHONY: all clean dist install uninstall
+
+get-patch:
+	mkdir -p patches
+	curl -fSsL $(URL) -O --output-dir ./patches
