@@ -22,6 +22,14 @@ static const unsigned int gappov =
     30; /* vert outer gap between windows and screen edge */
 static int smartgaps =
     0; /* 1 means no outer gap when there is only one window */
+static const unsigned int ulinepad =
+    5; /* horizontal padding between the underline and tag */
+static const unsigned int ulinestroke =
+    2; /* thickness / height of the underline */
+static const unsigned int ulinevoffset =
+    0; /* how far above the bottom of the bar the line should appear */
+static const int ulineall =
+    0; /* 1 to show underline on all tags, 0 for just the active ones */
 
 static const char *colors[][3] = {
     /*               fg         bg         border   */
@@ -31,11 +39,6 @@ static const char *colors[][3] = {
 
 /* tagging */
 static const char *tags[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
-
-static const unsigned int ulinepad	= 5;	/* horizontal padding between the underline and tag */
-static const unsigned int ulinestroke	= 2;	/* thickness / height of the underline */
-static const unsigned int ulinevoffset	= 0;	/* how far above the bottom of the bar the line should appear */
-static const int ulineall 		= 0;	/* 1 to show underline on all tags, 0 for just the active ones */
 
 static const Rule rules[] = {
     /* xprop(1):
@@ -146,7 +149,6 @@ static const Button buttons[] = {
     /* click                event mask      button          function argument */
     {ClkLtSymbol, 0, Button1, setlayout, {0}},
     {ClkLtSymbol, 0, Button3, setlayout, {.v = &layouts[2]}},
-    {ClkWinTitle, 0, Button2, zoom, {0}},
     {ClkStatusText, 0, Button2, spawn, {.v = termcmd}},
     {ClkClientWin, MODKEY, Button1, movemouse, {0}},
     {ClkClientWin, MODKEY, Button2, togglefloating, {0}},
