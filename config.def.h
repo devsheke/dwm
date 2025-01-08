@@ -14,12 +14,12 @@ static const char col_gray2[] = "#444444";
 static const char col_gray3[] = "#bbbbbb";
 static const char col_gray4[] = "#eeeeee";
 static const char col_cyan[] = "#005577";
-static const unsigned int gappih = 20; /* horiz inner gap between windows */
-static const unsigned int gappiv = 10; /* vert inner gap between windows */
+static const unsigned int gappih = 12; /* horiz inner gap between windows */
+static const unsigned int gappiv = 12; /* vert inner gap between windows */
 static const unsigned int gappoh =
-    10; /* horiz outer gap between windows and screen edge */
+    12; /* horiz outer gap between windows and screen edge */
 static const unsigned int gappov =
-    30; /* vert outer gap between windows and screen edge */
+    12; /* vert outer gap between windows and screen edge */
 static int smartgaps =
     0; /* 1 means no outer gap when there is only one window */
 static const unsigned int ulinepad =
@@ -38,7 +38,7 @@ static const char *colors[][3] = {
 };
 
 /* tagging */
-static const char *tags[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
+static const char *tags[] = {"", "", "", "", "󰃖", ""};
 
 static const Rule rules[] = {
     /* xprop(1):
@@ -46,8 +46,12 @@ static const Rule rules[] = {
      *	WM_NAME(STRING) = title
      */
     /* class      instance    title       tags mask     isfloating   monitor */
-    {"Gimp", NULL, NULL, 0, 1, -1},
-    {"Firefox", NULL, NULL, 1 << 8, 0, -1},
+    {"alacritty", NULL, NULL, 1 << 0, 0, -1},
+    {"Firefox", NULL, NULL, 1 << 1, 0, -1},
+    {"Spotify", NULL, NULL, 1 << 2, 1, -1},
+    {"Celluloid", NULL, NULL, 1 << 2, 1, -1},
+    {"Thunar", NULL, NULL, 0, 1, -1},
+    {"Thunderbird", NULL, NULL, 1 << 3, 1, -1},
 };
 
 /* layout(s) */
@@ -63,10 +67,8 @@ static const int lockfullscreen =
 #include "vanitygaps.c"
 
 static const Layout layouts[] = {
-    {"[\\]", dwindle}, /* first entry is default */
-    {"[]=", tile},     {"[M]", monocle},
-    {"><>", NULL}, /* no layout function means floating behavior */
-    {NULL, NULL},
+    {"[\\]", dwindle}, {"[]=", tile}, {"[M]", monocle},
+    {"><>", NULL},     {NULL, NULL},
 };
 
 /* key definitions */
@@ -83,25 +85,12 @@ static const Layout layouts[] = {
     .v = (const char *[]) { "/bin/sh", "-c", cmd, NULL }                       \
   }
 
-static const char *roficmd[] = {
-    "/nix/store/qh6shsjfbjlp3m7z3mh3lysaiji3hpiv-rofi-1.7.5/bin/rofi", "-show",
-    "drun", NULL};
-
-static const char *termcmd[] = {
-    "/nix/store/45mphz7jvvic98b6nq8czngdiagsdn1i-alacritty-0.14.0/bin/"
-    "alacritty",
-    NULL};
-
-static const char *lockcmd[] = {
-    "/nix/store/fb5y07m82dkdcwa2ykx7mlbq2cx9rs66-lightdm-1.32.0/bin/dm-tool",
-    "lock", NULL};
-
 static const Key keys[] = {
     /* modifier                     key        function        argument */
-    {Mod4Mask, XK_space, spawn, {.v = roficmd}},
-    {MODKEY, XK_Return, spawn, {.v = termcmd}},
-    {MODKEY | ControlMask, XK_l, spawn, {.v = lockcmd}},
-    {MODKEY, XK_b, togglebar, {0}},
+    {MODKEY, XK_space, spawn, SHCMD("rofi -show drun")},
+    {MODKEY, XK_c, spawn, SHCMD("rofi -show calc")},
+    {MODKEY, XK_Return, spawn, SHCMD("alacritty")},
+    {MODKEY | ControlMask, XK_l, spawn, SHCMD("dm-tool lock")},
     {MODKEY, XK_j, focusstack, {.i = +1}},
     {MODKEY, XK_k, focusstack, {.i = -1}},
     {MODKEY, XK_i, incnmaster, {.i = +1}},
@@ -112,31 +101,15 @@ static const Key keys[] = {
     {MODKEY | ShiftMask, XK_l, setcfact, {.f = -0.25}},
     {MODKEY | ShiftMask, XK_o, setcfact, {.f = 0.00}},
     {MODKEY, XK_Return, zoom, {0}},
-    {MODKEY | Mod4Mask, XK_u, incrgaps, {.i = +1}},
-    {MODKEY | Mod4Mask | ShiftMask, XK_u, incrgaps, {.i = -1}},
-    {MODKEY | Mod4Mask, XK_i, incrigaps, {.i = +1}},
-    {MODKEY | Mod4Mask | ShiftMask, XK_i, incrigaps, {.i = -1}},
-    {MODKEY | Mod4Mask, XK_o, incrogaps, {.i = +1}},
-    {MODKEY | Mod4Mask | ShiftMask, XK_o, incrogaps, {.i = -1}},
-    {MODKEY | Mod4Mask, XK_6, incrihgaps, {.i = +1}},
-    {MODKEY | Mod4Mask | ShiftMask, XK_6, incrihgaps, {.i = -1}},
-    {MODKEY | Mod4Mask, XK_7, incrivgaps, {.i = +1}},
-    {MODKEY | Mod4Mask | ShiftMask, XK_7, incrivgaps, {.i = -1}},
-    {MODKEY | Mod4Mask, XK_8, incrohgaps, {.i = +1}},
-    {MODKEY | Mod4Mask | ShiftMask, XK_8, incrohgaps, {.i = -1}},
-    {MODKEY | Mod4Mask, XK_9, incrovgaps, {.i = +1}},
-    {MODKEY | Mod4Mask | ShiftMask, XK_9, incrovgaps, {.i = -1}},
-    {MODKEY | Mod4Mask, XK_0, togglegaps, {0}},
-    {MODKEY | Mod4Mask | ShiftMask, XK_0, defaultgaps, {0}},
     {MODKEY, XK_Tab, view, {0}},
-    {MODKEY | ShiftMask, XK_c, killclient, {0}},
+    {MODKEY, XK_q, killclient, {0}},
     {MODKEY, XK_t, setlayout, {.v = &layouts[0]}},
     {MODKEY, XK_f, setlayout, {.v = &layouts[1]}},
     {MODKEY, XK_m, setlayout, {.v = &layouts[2]}},
     {MODKEY, XK_r, setlayout, {.v = &layouts[3]}},
     {MODKEY | ShiftMask, XK_r, setlayout, {.v = &layouts[4]}},
     // {MODKEY, XK_space, setlayout, {0}},
-    {MODKEY | ShiftMask, XK_space, togglefloating, {0}},
+    {MODKEY | ShiftMask, XK_f, togglefloating, {0}},
     {MODKEY, XK_0, view, {.ui = ~0}},
     {MODKEY | ShiftMask, XK_0, tag, {.ui = ~0}},
     {MODKEY, XK_comma, focusmon, {.i = -1}},
@@ -144,8 +117,7 @@ static const Key keys[] = {
     {MODKEY | ShiftMask, XK_comma, tagmon, {.i = -1}},
     {MODKEY | ShiftMask, XK_period, tagmon, {.i = +1}},
     TAGKEYS(XK_1, 0) TAGKEYS(XK_2, 1) TAGKEYS(XK_3, 2) TAGKEYS(XK_4, 3)
-        TAGKEYS(XK_5, 4) TAGKEYS(XK_6, 5) TAGKEYS(XK_7, 6) TAGKEYS(XK_8, 7)
-            TAGKEYS(XK_9, 8){MODKEY | ShiftMask, XK_q, quit, {0}},
+        TAGKEYS(XK_5, 4) TAGKEYS(XK_6, 5){MODKEY | ShiftMask, XK_q, quit, {0}},
 };
 
 /* button definitions */
