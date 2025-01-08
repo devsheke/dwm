@@ -83,11 +83,24 @@ static const Layout layouts[] = {
     .v = (const char *[]) { "/bin/sh", "-c", cmd, NULL }                       \
   }
 
+static const char *roficmd[] = {
+    "/nix/store/qh6shsjfbjlp3m7z3mh3lysaiji3hpiv-rofi-1.7.5/bin/rofi", "-show",
+    "drun", NULL};
+
+static const char *termcmd[] = {
+    "/nix/store/45mphz7jvvic98b6nq8czngdiagsdn1i-alacritty-0.14.0/bin/"
+    "alacritty",
+    NULL};
+
+static const char *lockcmd[] = {
+    "/nix/store/fb5y07m82dkdcwa2ykx7mlbq2cx9rs66-lightdm-1.32.0/bin/dm-tool",
+    "lock", NULL};
+
 static const Key keys[] = {
     /* modifier                     key        function        argument */
-    {Mod4Mask, XK_space, spawn, SHCMD("rofi -show drun")},
-    {MODKEY, XK_Return, spawn, SHCMD("alacritty")},
-    {MODKEY | ControlMask, spawn, SHCMD("dm-tool lock")},
+    {Mod4Mask, XK_space, spawn, {.v = roficmd}},
+    {MODKEY, XK_Return, spawn, {.v = termcmd}},
+    {MODKEY | ControlMask, XK_l, spawn, {.v = lockcmd}},
     {MODKEY, XK_b, togglebar, {0}},
     {MODKEY, XK_j, focusstack, {.i = +1}},
     {MODKEY, XK_k, focusstack, {.i = -1}},
@@ -122,7 +135,7 @@ static const Key keys[] = {
     {MODKEY, XK_m, setlayout, {.v = &layouts[2]}},
     {MODKEY, XK_r, setlayout, {.v = &layouts[3]}},
     {MODKEY | ShiftMask, XK_r, setlayout, {.v = &layouts[4]}},
-    {MODKEY, XK_space, setlayout, {0}},
+    // {MODKEY, XK_space, setlayout, {0}},
     {MODKEY | ShiftMask, XK_space, togglefloating, {0}},
     {MODKEY, XK_0, view, {.ui = ~0}},
     {MODKEY | ShiftMask, XK_0, tag, {.ui = ~0}},
