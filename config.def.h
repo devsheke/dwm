@@ -1,49 +1,68 @@
 /* See LICENSE file for copyright and license details. */
 
-/* appearance */
+#include "vanitygaps.c"
 #include <X11/X.h>
-static const unsigned int borderpx = 1; /* border pixel of windows */
-static const unsigned int snap = 32;    /* snap pixel */
-static const int showbar = 1;           /* 0 means no bar */
-static const int topbar = 1;            /* 0 means bottom bar */
-static const int horizpadbar = 2;       /* horizontal padding for statusbar */
-static const int vertpadbar = 0;        /* vertical padding for statusbar */
+
+/*  --------------------- Appearance --------------------- */
+
+// border pixel of windows.
+static const unsigned int borderpx = 1;
+// snap pixel.
+static const unsigned int snap = 32;
+// 0 means no bar.
+static const int showbar = 1;
+// 0 means bottom bar.
+static const int topbar = 1;
+// horizontal and vertical padding for statusbar.
+static const int horizpadbar = 2;
+static const int vertpadbar = 0;
+
+// gap config
+// horiz inner gap bw windows
+static const unsigned int gappih = 12;
+// vert inner gap bw windows
+static const unsigned int gappiv = 12;
+// horiz outer gap bw windows and screen edge
+static const unsigned int gappoh = 12;
+// vert outer gap bw windows and screen edge
+static const unsigned int gappov = 12;
+// 1 means no outer gap when there is only one window
+static int smartgaps = 0;
+
+// tag underline config
+// horizontal padding between the underline and tag.
+static const unsigned int ulinepad = 5;
+// thickness / height of the underline.
+static const unsigned int ulinestroke = 2;
+// how far above the bottom of the bar the line should appear.
+static const unsigned int ulinevoffset = 0;
+// 1 to show underline on all tags, 0 for just active ones.
+static const int ulineall = 0;
+
+// colors and fonts
 static const char *fonts[] = {"monospace:size=10"};
 static const char col_gray1[] = "#222222";
 static const char col_gray2[] = "#444444";
 static const char col_gray3[] = "#bbbbbb";
 static const char col_gray4[] = "#eeeeee";
 static const char col_cyan[] = "#005577";
-static const unsigned int gappih = 12; /* horiz inner gap between windows */
-static const unsigned int gappiv = 12; /* vert inner gap between windows */
-static const unsigned int gappoh =
-    12; /* horiz outer gap between windows and screen edge */
-static const unsigned int gappov =
-    12; /* vert outer gap between windows and screen edge */
-static int smartgaps =
-    0; /* 1 means no outer gap when there is only one window */
-static const unsigned int ulinepad =
-    5; /* horizontal padding between the underline and tag */
-static const unsigned int ulinestroke =
-    2; /* thickness / height of the underline */
-static const unsigned int ulinevoffset =
-    0; /* how far above the bottom of the bar the line should appear */
-static const int ulineall =
-    0; /* 1 to show underline on all tags, 0 for just the active ones */
-
 static const char *colors[][3] = {
     /*               fg         bg         border   */
     [SchemeNorm] = {col_gray3, col_gray1, col_gray2},
     [SchemeSel] = {col_gray4, col_cyan, col_cyan},
 };
 
-/* tagging */
-static const char *tags[] = {"", "", "", "", "󰃖", ""};
+/* ========================================================= */
 
+/* ------------------------ Tagging ------------------------ */
+
+// tag labels.
+static const char *tags[] = {"", "", "", "", "󰃖", ""};
+// tag rules.
 static const Rule rules[] = {
     /* xprop(1):
-     *	WM_CLASS(STRING) = instance, class
-     *	WM_NAME(STRING) = title
+     *  WM_CLASS(STRING) = instance, class
+     *  WM_NAME(STRING) = title
      */
     /* class      instance    title       tags mask     isfloating   monitor */
     {"alacritty", NULL, NULL, 1 << 0, 0, -1},
@@ -54,24 +73,29 @@ static const Rule rules[] = {
     {"Thunderbird", NULL, NULL, 1 << 3, 1, -1},
 };
 
-/* layout(s) */
-static const float mfact = 0.55; /* factor of master area size [0.05..0.95] */
-static const int nmaster = 1;    /* number of clients in master area */
-static const int resizehints =
-    1; /* 1 means respect size hints in tiled resizals */
-static const int lockfullscreen =
-    1; /* 1 will force focus on the fullscreen window */
+/* ========================================================= */
 
-#define FORCE_VSPLIT                                                           \
-  1 /* nrowgrid layout: force two clients to always split vertically */
-#include "vanitygaps.c"
+/* ------------------------------- Layout(s) ----------------------------- */
+
+// factor of master area size [0.05..0.95].
+static const float mfact = 0.55;
+// number of clients in master area.
+static const int nmaster = 1;
+// 1 means respect size hints in tiled resizals.
+static const int resizehints = 1;
+// 1 will force focus on the fullscreen window.
+static const int lockfullscreen = 1;
 
 static const Layout layouts[] = {
     {"[\\]", dwindle}, {"[]=", tile}, {"[M]", monocle},
     {"><>", NULL},     {NULL, NULL},
 };
 
-/* key definitions */
+/* ======================================================================= */
+
+/* --------------------------------- Key definitions
+ * ------------------------------ */
+
 #define MODKEY Mod1Mask
 #define TAGKEYS(KEY, TAG)                                                      \
   {MODKEY, KEY, view, {.ui = 1 << TAG}},                                       \
@@ -79,7 +103,7 @@ static const Layout layouts[] = {
       {MODKEY | ShiftMask, KEY, tag, {.ui = 1 << TAG}},                        \
       {MODKEY | ControlMask | ShiftMask, KEY, toggletag, {.ui = 1 << TAG}},
 
-/* helper for spawning shell commands in the pre dwm-5.0 fashion */
+// helper for spawning shell commands in the pre dwm-5.0 fashion.
 #define SHCMD(cmd)                                                             \
   {                                                                            \
     .v = (const char *[]) { "/bin/sh", "-c", cmd, NULL }                       \
@@ -108,7 +132,7 @@ static const Key keys[] = {
     {MODKEY, XK_m, setlayout, {.v = &layouts[2]}},
     {MODKEY, XK_r, setlayout, {.v = &layouts[3]}},
     {MODKEY | ShiftMask, XK_r, setlayout, {.v = &layouts[4]}},
-    // {MODKEY, XK_space, setlayout, {0}},
+    {MODKEY | ShiftMask, XK_space, setlayout, {0}},
     {MODKEY | ShiftMask, XK_f, togglefloating, {0}},
     {MODKEY, XK_0, view, {.ui = ~0}},
     {MODKEY | ShiftMask, XK_0, tag, {.ui = ~0}},
@@ -120,9 +144,14 @@ static const Key keys[] = {
         TAGKEYS(XK_5, 4) TAGKEYS(XK_6, 5){MODKEY | ShiftMask, XK_q, quit, {0}},
 };
 
-/* button definitions */
-/* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
- * ClkClientWin, or ClkRootWin */
+/* ===========================================================================
+ */
+
+/* ------------------------------ Button definitions
+ * ---------------------------- */
+
+// click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
+// ClkClientWin, or ClkRootWin.
 static const Button buttons[] = {
     /* click                event mask      button          function argument */
     {ClkLtSymbol, 0, Button1, setlayout, {0}},
@@ -136,3 +165,6 @@ static const Button buttons[] = {
     {ClkTagBar, MODKEY, Button1, tag, {0}},
     {ClkTagBar, MODKEY, Button3, toggletag, {0}},
 };
+
+/* ===========================================================================
+ */
