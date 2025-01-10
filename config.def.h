@@ -1,8 +1,6 @@
 /* See LICENSE file for copyright and license details. */
 
-#include "vanitygaps.c"
 #include <X11/X.h>
-
 /*  --------------------- Appearance --------------------- */
 
 // border pixel of windows.
@@ -28,6 +26,8 @@ static const unsigned int gappoh = 12;
 static const unsigned int gappov = 12;
 // 1 means no outer gap when there is only one window
 static int smartgaps = 0;
+
+#include "vanitygaps.c"
 
 // tag underline config
 // horizontal padding between the underline and tag.
